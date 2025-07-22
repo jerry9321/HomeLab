@@ -15,7 +15,7 @@ spec:
         namespace: flux-system
       interval: 1m
   values:
-    replicaCount: 3
+    replicaCount: 2
     foo: value1
     bar:
     baz: value2
