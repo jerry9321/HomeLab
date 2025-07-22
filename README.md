@@ -73,7 +73,7 @@ HomeLab/
 - Kustomize overlays enable environment-specific customization and modularity.
 
 ## Deployment & Management
-- Use `kubectl apply -k` or let Flux handle deployment of manifests.
+Flux handles deployment of manifests.
 - Talos is used for cluster lifecycle management (provisioning, upgrades, etc.).
 - (Planned) CI/CD pipeline for manifest validation and automated deployment.
 
@@ -94,6 +94,10 @@ This approach ensures that all infrastructure is reproducible, auditable, and se
 - [Talos](https://www.talos.dev/)
 - [Flux](https://fluxcd.io/)
 - [Kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/)
+- [Kubernetes](https://kubernetes.io/)
+- [TrueNAS](https://www.truenas.com/)
+- [Azure](https://portal.azure.com)
+
 ---
 
 > This repository is a work in progress and will continue to evolve as my homelab grows. Contributions and suggestions are welcome!
