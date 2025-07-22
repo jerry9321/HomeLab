@@ -23,8 +23,7 @@ Persistent storage for Kubernetes pods is provided by a TrueNAS server, which su
   - 2 × 4TB drives
   - ZFS mirror (redundant)
 
-This setup offers both high capacity and redundancy for pod data, supporting a range of workloads with different performance and reliability needs.
-    
+## Tech Stack 
 - **Technologies Used:**
   - Kubernetes (Talos)
   - Kustomize
