@@ -1,0 +1,9 @@
+#This file is used by Flux to deploy the Helm repository for the NGINX Ingress Controller.
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+spec:
+  interval: 1h
+  url: https://kubernetes.github.io/ingress-nginx
