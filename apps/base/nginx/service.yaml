@@ -9,4 +9,5 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-  type: ClusterIP
+      nodePort: 32449  # Optional: fixed port; omit for dynamic. Allows access via http://<node-ip>:32449
+  type: NodePort
