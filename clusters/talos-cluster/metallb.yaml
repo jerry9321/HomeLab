@@ -18,6 +18,6 @@ spec:
   targetNamespace: metallb-system
   timeout: 1m
   wait: true
-dependsOn:
-  - name: metallb-crds
-    namespace: flux-system
+  dependsOn:
+    - name: metallb-crds
+      namespace: flux-system
