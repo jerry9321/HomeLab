@@ -1,6 +1,6 @@
 #this file is used by kustomize to group the metalLB ingress resources together.
 resources:
-  - namespace.yaml
-  - metallb-crds.yaml
   - ipaddresspool.yaml
   - l2advertisement.yaml
+  - helmrelease.yaml
+  - helmrepository.yaml
