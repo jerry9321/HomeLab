@@ -9,3 +9,4 @@ kind: Kustomization
 resources:
   - podinfo.yaml
   - nginx.yaml
+  - metallb.yaml
