@@ -9,3 +9,4 @@ spec:
   ports:
     - port: 80
       targetPort: 9898
+      #nodeport: 30080 # Optional, if you want to expose it on a specific NodePort from the cluster IP
