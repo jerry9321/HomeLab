@@ -20,4 +20,4 @@ spec:
   wait: true
   dependsOn:
     - name: metallb-crds
-      namespace: flux-system
+      namespace: metallb-system
