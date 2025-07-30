@@ -9,7 +9,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
-  path: clusters/talos-cluster/networking/metallb
+  path: networking/metallb
   prune: true
   sourceRef:
     kind: GitRepository
