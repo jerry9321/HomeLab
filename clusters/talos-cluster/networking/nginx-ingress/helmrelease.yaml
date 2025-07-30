@@ -1,22 +1,22 @@
 ## This file is used by Flux to deploy the NGINX Ingress Controller using Helm.
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
+apiVersion: helm.toolkit.fluxcd.io/v2beta1  # API version for HelmRelease CRD
+kind: HelmRelease  # Tells Flux to manage a Helm release
 metadata:
-  name: ingress-nginx
-  namespace: ingress-nginx
+  name: ingress-nginx  # Name of the Helm release
+  namespace: ingress-nginx  # Namespace where the release and controller will be deployed
 spec:
-  interval: 10m
+  interval: 10m  # How often Flux checks for changes and reconciles the release
   chart:
     spec:
-      chart: ingress-nginx
-      version: "4.13.0"  # Or latest
+      chart: ingress-nginx  # Name of the Helm chart to install
+      version: "4.13.0"  # Chart version to use (update as needed)
       sourceRef:
-        kind: HelmRepository
-        name: ingress-nginx
-        namespace: ingress-nginx
+        kind: HelmRepository  # Reference to a HelmRepository resource
+        name: ingress-nginx  # Name of the HelmRepository (should be defined elsewhere)
+        namespace: ingress-nginx  # Namespace where the HelmRepository is defined
   values:
     controller:
-      replicaCount: 2
+      replicaCount: 2  # Deploy 2 replicas for high availability
       service:
-        type: LoadBalancer
-        loadBalancerIP: 192.168.100.27  # Optional, if you're using MetalLB
+        type: LoadBalancer  # Expose the controller via a LoadBalancer service
+        loadBalancerIP: 192.168.100.27  # (Optional) Assign a static IP, e.g., for MetalLB

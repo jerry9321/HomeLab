@@ -1,9 +1,9 @@
-#This file is used by Flux to deploy the Helm repository for the NGINX Ingress Controller.
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
+# This file is used by Flux to define the Helm repository for the NGINX Ingress Controller.
+apiVersion: source.toolkit.fluxcd.io/v1beta2  # API version for HelmRepository CRD
+kind: HelmRepository  # Declares a Helm chart repository source
 metadata:
-  name: ingress-nginx
-  namespace: ingress-nginx
+  name: ingress-nginx  # Name of the HelmRepository resource (referenced by HelmRelease)
+  namespace: ingress-nginx  # Namespace where this resource is created
 spec:
-  interval: 1h
-  url: https://kubernetes.github.io/ingress-nginx
+  interval: 1h  # How often Flux checks for updates in the repository
+  url: https://kubernetes.github.io/ingress-nginx  # URL of the public ingress-nginx Helm chart repository
