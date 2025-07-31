@@ -24,5 +24,3 @@ spec:
               subPath: settings.yaml
       volumes:
         - name: tautulli-config
-          configMap:
-            name: tautulli-config
