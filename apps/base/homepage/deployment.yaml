@@ -18,3 +18,14 @@ spec:
           image: ghcr.io/gethomepage/homepage:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: homepage.home.local
+          volumeMounts:
+            - name: homepage-config
+              mountPath: /app/config/settings.yaml
+              subPath: settings.yaml
+      volumes:
+        - name: homepage-config
+          configMap:
+            name: homepage-config
