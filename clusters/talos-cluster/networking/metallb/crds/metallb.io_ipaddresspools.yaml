@@ -17,3 +17,27 @@ spec:
       schema:
         openAPIV3Schema:
           type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                addresses:
+                  type: array
+                  items:
+                    type: string
+                autoAssign:
+                  type: boolean
+                avoidBuggyIPs:
+                  type: boolean
+                serviceAllocation:
+                  type: object
+                  properties:
+                    priority:
+                      type: integer
+            status:
+              type: object
+              properties:
+                lastAllocatedIP:
+                  type: string
+                poolSize:
+                  type: integer
