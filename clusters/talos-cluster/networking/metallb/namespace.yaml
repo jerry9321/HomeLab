@@ -1,7 +1,0 @@
-#this file is used by kubectl to create the namespace for the nginx ingress controller.
-#it is not used by Flux, but it is useful to have the namespace defined in the Git repo
-#so that you can create the namespace before applying the nginx ingress controller resources.
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: metallb-system
