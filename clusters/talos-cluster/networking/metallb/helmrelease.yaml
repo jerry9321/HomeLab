@@ -15,6 +15,7 @@ spec:
         namespace: metallb-system
   values:
     controller:
+      replicaCount: 2
       enabled: true
     speaker:
       enabled: true
