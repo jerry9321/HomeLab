@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
-              value: homepage.home.local
+              value: homepage.home.local # Adjust this to your domain. This is set in my local dns server to map to the metalLB IP
           volumeMounts:
             - name: homepage-config
               mountPath: /app/config/settings.yaml

@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: tautulli.home.local
+    - host: tautulli.home.local # Adjust this to your domain. This is set in my local dns server to map to the metalLB IP
       http:
         paths:
           - path: /
