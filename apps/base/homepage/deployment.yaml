@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: homepage
-          image: ghcr.io/linuxserver/sonarr:latest
+          image: ghcr.io/gethomepage/homepage:latest
           ports:
             - containerPort: 3000
