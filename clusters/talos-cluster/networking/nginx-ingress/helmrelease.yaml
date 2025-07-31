@@ -20,3 +20,5 @@ spec:
       service:
         type: LoadBalancer  # Expose the controller via a LoadBalancer service
         loadBalancerIP: 192.168.100.27  # (Optional) Assign a static IP, e.g., for MetalLB
+      admissionWebhooks:
+        enabled: true
