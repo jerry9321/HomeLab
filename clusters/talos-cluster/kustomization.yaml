@@ -27,3 +27,4 @@ resources:
   - nginx.yaml
   - metallb-crds.yaml
   - metallb.yaml
+  - homepage.yaml

@@ -1,20 +1,19 @@
-#This file is used by Flux (NOT Kubernetes) to deploy the homepage app into the homepage namespace.
-#Every 5 minutes, look in the ./apps/production/homepage folder in the flux-system Git repo. 
-#Apply everything in that folder into the homepage namespace. 
+#“Every 5 minutes, look in the ./apps/production/podinfo folder in the flux-system Git repo. 
+#Apply everything in that folder into the podinfo namespace. 
 #Wait up to 1 minute. Clean up any deleted resources.”
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: homepage
+  name: podinfo
   namespace: flux-system
 spec:
   interval: 5m
-  path: ./apps/production/homepage
+  path: ./apps/production/podinfo
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: homepage
+  targetNamespace: podinfo
   timeout: 1m
   wait: true
