@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tautulli
+  namespace: tautulli
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tautulli
+  template:
+    metadata:
+      labels:
+        app: tautulli
+    spec:
+      containers:
+        - name: tautulli
+          image: ghcr.io/tautulli/tautulli:latest
+          ports:
+            - containerPort: 8181
+          volumeMounts:
+            - name: tautulli-config
+              mountPath: /app/config/settings.yaml
+              subPath: settings.yaml
+      volumes:
+        - name: tautulli-config
+          configMap:
+            name: tautulli-config
