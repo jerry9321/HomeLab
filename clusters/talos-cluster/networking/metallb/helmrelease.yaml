@@ -15,7 +15,7 @@ spec:
         namespace: metallb-system
   values:
     controller:
-      replicaCount: 2
-      enabled: true
+      enabled: true # Enable the controller component
+      replicaCount: 2 # Deploy 2 replicas for high availability
     speaker:
-      enabled: true
+      enabled: true # Enable the speaker component
