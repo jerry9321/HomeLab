@@ -13,4 +13,8 @@ spec:
         kind: HelmRepository
         name: metallb
         namespace: metallb-system
-  values: {}
+  values:
+    controller:
+      enabled: true
+    speaker:
+      enabled: true
