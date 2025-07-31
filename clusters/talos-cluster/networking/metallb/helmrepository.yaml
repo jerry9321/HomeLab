@@ -1,3 +1,18 @@
+# -----------------------------------------------------------------------------
+# MetalLB HelmRepository for FluxCD
+#
+# This manifest defines a HelmRepository resource for FluxCD.
+# - Registers the official MetalLB Helm chart repository with FluxCD.
+# - Allows HelmReleases in this namespace to reference and install MetalLB charts.
+#
+# Key fields:
+# - url: The URL of the MetalLB Helm chart repository.
+# - interval: How often FluxCD checks for chart updates.
+#
+# For more details, see:
+# https://fluxcd.io/docs/components/source/helmrepositories/
+# -----------------------------------------------------------------------------
+
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:

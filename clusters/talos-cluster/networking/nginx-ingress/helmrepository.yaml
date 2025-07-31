@@ -1,3 +1,17 @@
+# -----------------------------------------------------------------------------
+# NGINX Ingress HelmRepository for FluxCD
+#
+# This manifest defines a HelmRepository resource for FluxCD.
+# - Registers the official NGINX Ingress Helm chart repository with FluxCD.
+# - Allows HelmReleases in this namespace to reference and install ingress-nginx charts.
+#
+# Key fields:
+# - url: The URL of the ingress-nginx Helm chart repository.
+# - interval: How often FluxCD checks for chart updates.
+#
+# For more details, see:
+# https://fluxcd.io/docs/components/source/helmrepositories/
+# -----------------------------------------------------------------------------
 # This file is used by Flux to define the Helm repository for the NGINX Ingress Controller.
 apiVersion: source.toolkit.fluxcd.io/v1beta2  # API version for HelmRepository CRD
 kind: HelmRepository  # Declares a Helm chart repository source

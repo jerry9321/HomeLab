@@ -1,3 +1,15 @@
+# -----------------------------------------------------------------------------
+# MetalLB Namespace Resource
+#
+# This manifest creates the metallb-system namespace for MetalLB components.
+# - Sets required PodSecurity labels to privileged, allowing MetalLB to run
+#   privileged pods (necessary for proper operation on Talos clusters).
+#
+# For more details, see:
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+# https://kubernetes.io/docs/concepts/security/pod-security-standards/
+# -----------------------------------------------------------------------------
+
 apiVersion: v1
 kind: Namespace
 metadata:

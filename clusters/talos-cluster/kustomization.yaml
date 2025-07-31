@@ -1,8 +1,24 @@
-#This file lets you group multiple Kustomization resources together. 
-#It's not required by Flux, but it's useful if you want to deploy many apps with one 
-#kustomize build or have Flux sync everything under clusters/talos-cluster/.
+# -----------------------------------------------------------------------------
+# Root Kustomization for Talos Cluster
+#
+# This Kustomization file groups all major application and infrastructure
+# resources for the cluster. It allows you to deploy and manage multiple
+# Kustomization resources (apps, networking, CRDs, etc.) together.
 
+#It's not required by Flux, but it's useful if you want to deploy many apps with one 
 #This file defines which parts of your Git repo Flux should apply to the cluster.
+
+#
+# Resources included:
+# - podinfo.yaml: Deploys the Podinfo app.
+# - nginx.yaml: Deploys the NGINX Ingress controller and related resources.
+# - metallb-crds.yaml: Installs MetalLB CRDs.
+# - metallb.yaml: Deploys MetalLB and its configuration.
+#
+# For more details, see:
+# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/
+# -----------------------------------------------------------------------------
+
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

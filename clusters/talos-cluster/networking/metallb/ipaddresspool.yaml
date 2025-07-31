@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# MetalLB IPAddressPool Resource
+#
+# This manifest defines an IPAddressPool for MetalLB.
+# - Specifies a pool of IP addresses (or ranges) that MetalLB can assign to
+#   LoadBalancer Services in the cluster.
+# - In this example, a single IP (192.168.100.27/32) is available for allocation.
+#
+# Key fields:
+# - addresses: List of IPs or CIDR ranges for MetalLB to use.
+#
+# For more details, see:
+# https://metallb.universe.tf/configuration/#ipaddresspool
+
+#See output in the terminal for the IPAddressPool resource
+#kubectl get ipaddresspool -A
+# -----------------------------------------------------------------------------
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:

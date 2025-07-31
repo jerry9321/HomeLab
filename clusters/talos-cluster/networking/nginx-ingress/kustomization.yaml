@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+# NGINX Ingress Kustomization
+#
+# This Kustomization file groups all resources needed to deploy the NGINX Ingress
+# controller in this environment. It ensures all required manifests are applied
+# together and in the correct order.
+#
+# Resources included:
+# - namespace.yaml: Creates the ingress-nginx namespace with required labels.
+# - helmrepository.yaml: Registers the NGINX Ingress Helm chart repository for FluxCD.
+# - helmrelease.yaml: Deploys the NGINX Ingress controller using the Helm chart via FluxCD.
+#
+# For more details, see:
+# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/
+# -----------------------------------------------------------------------------
+
 #this file is used by kustomize to group the nginx ingress resources together.
 resources:
   - namespace.yaml

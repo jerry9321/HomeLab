@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: ingress-nginx  # Name of the Helm chart to install
-      version: "4.11.0"  # Chart version to use (update as needed)
+      version: "4.11.0"  # Specify the version of the Nginx Helm chart. Remove or comment out this line if you want to use the latest version
       sourceRef:
         kind: HelmRepository  # Reference to a HelmRepository resource
         name: ingress-nginx  # Name of the HelmRepository (should be defined elsewhere)

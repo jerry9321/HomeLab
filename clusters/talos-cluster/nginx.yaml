@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# NGINX Ingress Kustomization for FluxCD
+#
+# This manifest defines a FluxCD Kustomization resource to deploy the NGINX Ingress
+# controller and related resources to the cluster.
+# - Applies all manifests from the specified path into the ingress-nginx namespace.
+# - Ensures resources are kept in sync with the Git repository (prune enabled).
+# - Waits for resources to be ready before proceeding.
+#
+# Key fields:
+# - path: Location of NGINX Ingress manifests in the repo.
+# - targetNamespace: Namespace to deploy resources into.
+# - prune: Remove resources not present in the path.
+#
+# For more details, see:
+# https://fluxcd.io/docs/components/kustomize/kustomization/
+# -----------------------------------------------------------------------------
 #This file is used by Flux (NOT Kubernetes) to deploy the nginx app into the nginx namespace.
 #Every 5 minutes, look in the ./networking/nginx-ingress folder in the flux-system Git repo. 
 #Apply everything in that folder into the nginx namespace. 

@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# MetalLB Kustomization
+#
+# This Kustomization file defines the set of resources needed to deploy MetalLB
+# in this environment. It ensures all required manifests are applied in the correct order.
+#
+# Resources included:
+# - namespace.yaml: Creates the metallb-system namespace with required labels.
+# - helmrepository.yaml: Registers the MetalLB Helm chart repository for FluxCD.
+# - helmrelease.yaml: Deploys MetalLB using the Helm chart via FluxCD.
+# - ipaddresspool.yaml: Defines the pool of IP addresses for MetalLB to assign.
+# - l2advertisement.yaml: Configures MetalLB to advertise IPs using Layer 2.
+#
+# For more details, see:
+# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/
+# -----------------------------------------------------------------------------
+
 resources:
   - namespace.yaml
   - helmrepository.yaml

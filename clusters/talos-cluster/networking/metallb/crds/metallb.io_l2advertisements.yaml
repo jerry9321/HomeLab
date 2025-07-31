@@ -1,3 +1,18 @@
+# -----------------------------------------------------------------------------
+# MetalLB L2Advertisement CustomResourceDefinition (CRD)
+#
+# This CRD defines the schema for MetalLB L2Advertisement resources.
+# An L2Advertisement resource tells MetalLB to advertise the IPs from
+# one or more IPAddressPools using Layer 2 (ARP/NDP) within the local network.
+#
+# Key fields:
+# - spec: (optional) Can restrict advertisement to specific IP pools or namespaces.
+#
+# L2Advertisement is required for MetalLB to announce LoadBalancer IPs
+# on the local network, enabling external access to services.
+#
+# For more details, see: https://metallb.universe.tf/configuration/#l2advertisement
+# -----------------------------------------------------------------------------
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:

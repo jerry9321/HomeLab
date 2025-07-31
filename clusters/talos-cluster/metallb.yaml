@@ -1,3 +1,22 @@
+# -----------------------------------------------------------------------------
+# MetalLB System Kustomization for FluxCD
+#
+# This manifest defines a FluxCD Kustomization resource to deploy MetalLB and its
+# configuration to the cluster.
+# - Applies all MetalLB manifests (namespace, HelmRelease, IP pools, etc.) from the specified path.
+# - Ensures resources are deployed into the metallb-system namespace.
+# - Waits for MetalLB CRDs to be established before applying (dependsOn).
+# - Prunes resources removed from the path.
+#
+# Key fields:
+# - path: Location of MetalLB manifests in the repo.
+# - targetNamespace: Namespace to deploy resources into.
+# - dependsOn: Ensures CRDs are applied first.
+#
+# For more details, see:
+# https://fluxcd.io/docs/components/kustomize/kustomization/
+# -----------------------------------------------------------------------------
+
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:

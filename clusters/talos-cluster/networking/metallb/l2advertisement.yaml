@@ -1,3 +1,15 @@
+# -----------------------------------------------------------------------------
+# MetalLB L2Advertisement Resource
+#
+# This manifest defines an L2Advertisement for MetalLB.
+# - Enables MetalLB to advertise IPs from the configured IPAddressPool(s)
+#   using Layer 2 (ARP/NDP) on the local network.
+# - Required for MetalLB to announce LoadBalancer IPs for external access.
+#
+# For more details, see:
+# https://metallb.universe.tf/configuration/#l2advertisement
+# -----------------------------------------------------------------------------
+
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:

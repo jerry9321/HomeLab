@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# MetalLB CRDs Kustomization for FluxCD
+#
+# This manifest defines a FluxCD Kustomization resource to apply the MetalLB
+# CustomResourceDefinitions (CRDs) to the cluster.
+# - Ensures all required CRDs for MetalLB are installed before deploying MetalLB itself.
+# - Uses a dedicated path for CRDs and prunes any removed CRDs.
+#
+# Key fields:
+# - path: Location of the CRD manifests in the repo.
+# - prune: Remove CRDs not present in the path.
+# - wait: Wait for CRDs to be established before proceeding.
+#
+# For more details, see:
+# https://fluxcd.io/docs/components/kustomize/kustomization/
+# -----------------------------------------------------------------------------
+
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:

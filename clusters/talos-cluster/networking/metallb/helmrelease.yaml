@@ -1,3 +1,21 @@
+# -----------------------------------------------------------------------------
+# MetalLB HelmRelease for FluxCD
+#
+# This manifest defines a HelmRelease resource for deploying MetalLB using FluxCD.
+# - Deploys MetalLB via the official Helm chart.
+# - Enables both the controller (manages IP assignment) and speaker (announces IPs on the network).
+# - Chart version can be updated as needed for new features or bug fixes.
+#
+# Key fields:
+# - chart: Specifies the MetalLB Helm chart and version.
+# - values.controller.enabled: Enables the controller Deployment.
+# - values.speaker.enabled: Enables the speaker DaemonSet (one per node).
+#
+# For more details, see:
+# https://metallb.universe.tf/installation/
+# https://fluxcd.io/docs/components/helm/helmreleases/
+# -----------------------------------------------------------------------------
+
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -8,7 +26,7 @@ spec:
   chart:
     spec:
       chart: metallb
-      version: "0.15.2
+      version: "0.15.2 # Specify the version of the MetalLB Helm chart. Remove or comment out this line if you want to use the latest version
       sourceRef:
         kind: HelmRepository
         name: metallb
