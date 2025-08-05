@@ -58,4 +58,3 @@ spec:
                 lastAllocatedIP:
                   type: string
                 poolSize:
-                  type: integer

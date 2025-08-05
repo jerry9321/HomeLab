@@ -9,3 +9,4 @@ spec:
   secretRef:
     name: discord-webhook
     key: webhookUrl
+

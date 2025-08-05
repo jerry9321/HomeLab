@@ -8,6 +8,8 @@
 - [ ] Documentation and cheat sheets completed for all major tools
 - [ ] Deploy external secrets
 - [ ] Configure ISCI for volume mounts from TrueNas
+- [ ] Deploy K9s
+- [ ] Deploy Kubectx
 
 ---
 
