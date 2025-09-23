@@ -7,8 +7,8 @@ spec:
   dependsOn:
     - name: external-secrets-crds
   interval: 10m
-  path: ./infrastructure\controllers\base\external-secrets
+  path: ./infrastructure/controllers/base/external-secrets
   prune: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: external-secrets
