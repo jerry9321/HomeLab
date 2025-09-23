@@ -27,3 +27,4 @@ resources:
   - metallb.yaml
   - homepage.yaml
   - tautulli.yaml
+  - external-secrets.yaml
