@@ -1,0 +1,12 @@
+# democratic-csi values for TrueNAS NFS
+# Edits made: trueNAS.host set to 192.168.100.11, parentDataset set under storagepool1/kubernetes
+csiDriver:
+  name: freenas-nfs
+trueNAS:
+  host: 192.168.100.11      # TrueNAS management IP (configured per your message)
+  ssh:
+    user: root               # SSH user with permission to create datasets/exports; change if you use another user
+    privateKeySecretName: truenas-ssh-secret  # Kubernetes Secret name (do NOT commit private key plaintext)
+parentDataset: "storagepool1/kubernetes/nfs"  # parent dataset where NFS exports will be created
+
+# Additional driver options can be added below following democratic-csi examples

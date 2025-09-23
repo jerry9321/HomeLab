@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: democratic-csi-iscsi
+  namespace: democratic-csi
+spec:
+  interval: 1h0m
+  releaseName: zfs-iscsi
+  chart:
+    spec:
+      chart: democratic-csi
+      sourceRef:
+        kind: HelmRepository
+        name: democratic-csi
+        namespace: flux-system
+      version: ">=0.0.0"
+  valuesFrom:
+    - kind: ConfigMap
+      name: democratic-csi-iscsi-values
+      valuesKey: values.yaml
+  install:
+    createNamespace: true
+  upgrade:
+    remediation:
+      retries: 1
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: democratic-csi-iscsi
+  namespace: democratic-csi
+spec:
+  interval: 1h0m
+  releaseName: zfs-iscsi
+  chart:
+    spec:
+      chart: democratic-csi
+      sourceRef:
+        kind: HelmRepository
+        name: democratic-csi
+        namespace: flux-system
+      version: ">=0.0.0"
+  valuesFrom:
+    - kind: ConfigMap
+      name: democratic-csi-iscsi-values
+      valuesKey: values.yaml
+  install:
+    createNamespace: true
+  upgrade:
+    remediation:
+      retries: 1

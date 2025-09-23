@@ -29,7 +29,7 @@ This cheat sheet provides common `talosctl` commands for managing, debugging, an
 ## Node IPs
 
 - Worker Node 1: `192.168.100.25`
-- Worker Node 2: `192.168.100.22`
+- Worker Node 2: `192.168.100.24` #Modified
 - Control Plane (Kubernetes Endpoint): `https://192.168.100.26:6443`
 - MetalLB IP: `192.168.100.27`
 

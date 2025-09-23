@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - helmrepository.yaml
+  - helmrelease.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - repository.yaml
+  - deployment-crds.yaml
+  - release.yaml
+
+#To do: Create a namespace name external-secrets
+#Then create a Secret in that namespace
+#the secret az-creds secret made is then referenced in the 
+#config external-secret-store.yaml file
+kubectl create secret generic az-creds \
+--from-literal=ClientID=<clientID> \
+--from-literal=ClientSecret=<clientSecret>
+
+#Create the t
+
+authSecretRef:
+        clientId:
+          name: az-creds
+          key: ClientID
+          namespace: external-secrets
+        clientSecret:
+          name: az-creds
+          key: ClientSecret
+          namespace: external-secrets
+
+#Then try to deploy. 
