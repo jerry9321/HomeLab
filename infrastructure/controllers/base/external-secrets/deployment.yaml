@@ -15,7 +15,7 @@ spec:
   chart:
     spec:
       chart: external-secrets
-      version: 0.10.3
+      version: 0.20.1
       sourceRef:
         kind: HelmRepository
         name: external-secrets
@@ -26,4 +26,4 @@ spec:
   # Ref: https://fluxcd.io/flux/components/helm/api/v2/#helm.toolkit.fluxcd.io/v2.Install
   install:
     createNamespace: true
-    crds: true
+    crds: false
