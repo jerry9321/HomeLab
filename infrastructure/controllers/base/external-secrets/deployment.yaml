@@ -21,8 +21,11 @@ spec:
         name: external-secrets
         namespace: flux-system
   values:
-    installCRDs: false
-
+  # (CRDs are applied separately by the external-secrets-crds Kustomization.)
+  # If the upstream chart supports it, you can set chart values to skip or enable
+  # CRD installation. We manage CRDs via a dedicated Kustomization to avoid
+  # Helm/CRD race conditions.
+  
   # Ref: https://fluxcd.io/flux/components/helm/api/v2/#helm.toolkit.fluxcd.io/v2.Install
   install:
     createNamespace: true
