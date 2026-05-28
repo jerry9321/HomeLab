@@ -1,31 +1,31 @@
 output "storage_account" {
   description = "Storage account name used for Azure Files"
-  value       = azurerm_storage_account.sa.name
+  value       = local.storage_account_name
 }
 
 output "file_share" {
   description = "Azure File share name used for Memtly media"
-  value       = azurerm_storage_share.memtly_media.name
+  value       = var.file_share_name
 }
 
 output "file_share_config" {
   description = "Azure File share name used for Memtly config"
-  value       = azurerm_storage_share.memtly_config.name
+  value       = lower(replace("${var.name_prefix}-config", "-", ""))
 }
 
 output "file_share_thumbnails" {
   description = "Azure File share name used for Memtly thumbnails"
-  value       = azurerm_storage_share.memtly_thumbnails.name
+  value       = var.file_share_thumbnails_name
 }
 
 output "file_share_custom_resources" {
   description = "Azure File share name used for Memtly custom resources"
-  value       = azurerm_storage_share.memtly_custom_resources.name
+  value       = var.file_share_custom_resources_name
 }
 
 output "file_share_mariadb" {
   description = "Azure File share name used for MariaDB data"
-  value       = azurerm_storage_share.memtly_mariadb.name
+  value       = var.file_share_mariadb_name
 }
 
 output "container_fqdn" {

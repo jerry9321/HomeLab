@@ -31,9 +31,11 @@ resource "azurerm_resource_group" "rg" {
   serverless option consider Azure Container Apps (ACA) — ask if you want that.
 */
 
-# Storage account + Azure File share (for Memtly media storage)
+# Storage account + Azure File shares can be managed in this stack only when explicitly enabled.
+# Default behavior keeps storage external so app teardown cannot destroy data resources.
 resource "azurerm_storage_account" "sa" {
-  name                     = lower(replace("${var.name_prefix}sa", "-", ""))
+  count                    = var.manage_storage_in_this_stack ? 1 : 0
+  name                     = var.storage_account_name
   resource_group_name      = var.data_resource_group_name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -42,35 +44,44 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_storage_share" "memtly_media" {
+  count              = var.manage_storage_in_this_stack ? 1 : 0
   name               = var.file_share_name
-  storage_account_id = azurerm_storage_account.sa.id
+  storage_account_id = azurerm_storage_account.sa[0].id
   quota              = 128 # GiB, sized for ~100 GiB uploads with headroom
 }
 
-# Create Azure file share for Memtly config / app keys (persist /app/config)
 resource "azurerm_storage_share" "memtly_config" {
+  count              = var.manage_storage_in_this_stack ? 1 : 0
   name               = lower(replace("${var.name_prefix}-config", "-", ""))
-  storage_account_id = azurerm_storage_account.sa.id
+  storage_account_id = azurerm_storage_account.sa[0].id
   quota              = 1
 }
-# Create Azure file share for Memtly thumbnails (persist /app/thumbnails)
+
 resource "azurerm_storage_share" "memtly_thumbnails" {
+  count              = var.manage_storage_in_this_stack ? 1 : 0
   name               = var.file_share_thumbnails_name
-  storage_account_id = azurerm_storage_account.sa.id
+  storage_account_id = azurerm_storage_account.sa[0].id
   quota              = 32
 }
-# Create Azure file share for Memtly custom resources (persist /app/custom_resources)
+
 resource "azurerm_storage_share" "memtly_custom_resources" {
+  count              = var.manage_storage_in_this_stack ? 1 : 0
   name               = var.file_share_custom_resources_name
-  storage_account_id = azurerm_storage_account.sa.id
+  storage_account_id = azurerm_storage_account.sa[0].id
   quota              = 10
 }
 
-# Create Azure file share for MariaDB data (persist /var/lib/mysql)
 resource "azurerm_storage_share" "memtly_mariadb" {
+  count              = var.manage_storage_in_this_stack ? 1 : 0
   name               = var.file_share_mariadb_name
-  storage_account_id = azurerm_storage_account.sa.id
+  storage_account_id = azurerm_storage_account.sa[0].id
   quota              = 32
+}
+
+data "azurerm_storage_account" "existing_sa" {
+  count               = var.manage_storage_in_this_stack ? 0 : 1
+  name                = var.storage_account_name
+  resource_group_name = var.data_resource_group_name
 }
 
 # Linux VM (smallest recommended SKU by default is Standard_B1s; override via var)
@@ -141,9 +152,9 @@ resource "azurerm_container_group" "cg" {
         name                 = "memtly-mariadb"
         mount_path           = "/var/lib/mysql"
         read_only            = false
-        share_name           = azurerm_storage_share.memtly_mariadb.name
-        storage_account_name = azurerm_storage_account.sa.name
-        storage_account_key  = azurerm_storage_account.sa.primary_access_key
+        share_name           = var.file_share_mariadb_name
+        storage_account_name = local.storage_account_name
+        storage_account_key  = local.storage_account_key
       }
     }
   }
@@ -193,36 +204,36 @@ resource "azurerm_container_group" "cg" {
         name                 = "memtly-config"
         mount_path           = "/app/config"
         read_only            = false
-        share_name           = azurerm_storage_share.memtly_config.name
-        storage_account_name = azurerm_storage_account.sa.name
-        storage_account_key  = azurerm_storage_account.sa.primary_access_key
+        share_name           = lower(replace("${var.name_prefix}-config", "-", ""))
+        storage_account_name = local.storage_account_name
+        storage_account_key  = local.storage_account_key
       }
 
       volume {
         name                 = "memtly-thumbnails"
         mount_path           = "/app/thumbnails"
         read_only            = false
-        share_name           = azurerm_storage_share.memtly_thumbnails.name
-        storage_account_name = azurerm_storage_account.sa.name
-        storage_account_key  = azurerm_storage_account.sa.primary_access_key
+        share_name           = var.file_share_thumbnails_name
+        storage_account_name = local.storage_account_name
+        storage_account_key  = local.storage_account_key
       }
 
       volume {
         name                 = "memtly-uploads"
         mount_path           = "/app/uploads"
         read_only            = false
-        share_name           = azurerm_storage_share.memtly_media.name
-        storage_account_name = azurerm_storage_account.sa.name
-        storage_account_key  = azurerm_storage_account.sa.primary_access_key
+        share_name           = var.file_share_name
+        storage_account_name = local.storage_account_name
+        storage_account_key  = local.storage_account_key
       }
 
       volume {
         name                 = "memtly-custom-resources"
         mount_path           = "/app/custom_resources"
         read_only            = false
-        share_name           = azurerm_storage_share.memtly_custom_resources.name
-        storage_account_name = azurerm_storage_account.sa.name
-        storage_account_key  = azurerm_storage_account.sa.primary_access_key
+        share_name           = var.file_share_custom_resources_name
+        storage_account_name = local.storage_account_name
+        storage_account_key  = local.storage_account_key
       }
     }
   }
@@ -263,6 +274,8 @@ resource "azurerm_container_group" "cg" {
 /* outputs moved to outputs.tf to avoid duplicate definitions */
 
 locals {
+  storage_account_name = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].name : data.azurerm_storage_account.existing_sa[0].name
+  storage_account_key  = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].primary_access_key : data.azurerm_storage_account.existing_sa[0].primary_access_key
   dns_label      = length(var.dns_label) > 0 ? var.dns_label : "memtly-${random_id.unique.hex}"
   key_vault_name = length(var.key_vault_name) > 0 ? var.key_vault_name : "memtly-kv-${random_id.unique.hex}"
 }

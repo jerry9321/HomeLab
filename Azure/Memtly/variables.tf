@@ -10,6 +10,18 @@ variable "data_resource_group_name" {
   default     = "Memtly-Data-Storage"
 }
 
+variable "storage_account_name" {
+  description = "Existing storage account name used by Memtly volumes."
+  type        = string
+  default     = "memtlysa"
+}
+
+variable "manage_storage_in_this_stack" {
+  description = "When true, this stack creates/manages storage account and shares. Keep false to isolate app teardown from data resources."
+  type        = bool
+  default     = false
+}
+
 variable "location" {
   description = "Azure region"
   type        = string
