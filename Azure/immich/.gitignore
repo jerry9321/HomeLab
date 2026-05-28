@@ -1,0 +1,53 @@
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*.tfvars
+*.tfvars.json
+secrets.tfvars
+plan.tfplan
+*.tfplan
+*.pem
+*.key
+*.pfx
+id_rsa*
+.ssh/
+
+# Azure specific
+*.azureProfile
+.azure/
+
+# Key/credential files
+.env
+.env.*
+.tfvars
+
+# Cloud-init, user-data may contain secrets
+cloud-init.yaml
+cloud-init.yml
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# OS
+$RECYCLE.BIN/
+
+# Do not ignore README or docs
+!README.md
+!*.md
+memtly-logs.txt
+secrets.tfvars
