@@ -1,0 +1,58 @@
+services:
+  mariadb:
+    container_name: 'mariadb'
+    image: 'mariadb:latest'
+    ports:
+      - '3306:3306/tcp'
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 'ChangeMe!'
+      MYSQL_DATABASE: 'memtly'
+      MYSQL_USER: 'memtly'
+      MYSQL_PASSWORD: 'ChangeMe!'
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - data-volume-mariadb:/var/lib/mysql:rw
+    networks:
+      - memtly-net
+    hostname: 'mariadb'
+    restart: 'always'
+  memtly:
+    container_name: Memtly
+    image: memtly/memtly:latest
+    ports:
+      - '${HTTP_PORT:-8080}:5000/tcp'
+    environment:
+      TITLE: 'Memtly'
+      DATABASE_TYPE: 'mariadb'
+      DATABASE_CONNECTION_STRING: 'Server=mariadb;Port=3306;Database=memtly;User=memtly;Password=ChangeMe!;'
+      ACCOUNT_ADMIN_PASSWORD: 'admin'
+      ENCRYPTION_KEY: 'ChangeMe'
+      ENCRYPTION_SALT: 'ChangeMe'
+    volumes:
+      - data-volume-config:/app/config
+      - data-volume-thumbnails:/app/thumbnails
+      - data-volume-uploads:/app/uploads
+      - data-volume-custom-resources:/app/custom_resources
+    networks:
+      - memtly-net
+    hostname: memtly
+    restart: always
+    depends_on:
+      - mariadb
+volumes:
+  data-volume-config:
+    name: Memtly-Config
+  data-volume-thumbnails:
+    name: Memtly-Thumbnails
+  data-volume-uploads:
+    name: Memtly-Uploads
+  data-volume-custom-resources:
+    name: Memtly-CustomResources
+  data-volume-mariadb:
+    name: Memtly-MariaDB
+networks:
+  memtly-net:
+    name: 'memtly-net'
+    external: false
