@@ -186,6 +186,79 @@ variable "container_registry_password" {
   default     = ""
 }
 
+variable "create_container_registry" {
+  description = "Create an Azure Container Registry in this stack for private image pulls."
+  type        = bool
+  default     = true
+}
+
+variable "container_registry_name" {
+  description = "Optional name for an Azure Container Registry to create. If empty, a generated name is used."
+  type        = string
+  default     = ""
+}
+
+variable "container_registry_sku" {
+  description = "SKU for the Azure Container Registry."
+  type        = string
+  default     = "Basic"
+}
+
+variable "import_images" {
+  description = "When true, import public images from Docker Hub into the created ACR."
+  type        = bool
+  default     = true
+}
+
+variable "import_memtly_source" {
+  description = "Source image on Docker Hub to import for memtly (repository:tag)."
+  type        = string
+  default     = "memtly/memtly:latest"
+}
+
+variable "import_mariadb_source" {
+  description = "Source image on Docker Hub to import for mariadb (repository:tag). For official Docker Hub images, include library/, e.g. library/mariadb:latest."
+  type        = string
+  default     = "library/mariadb:latest"
+}
+
+variable "build_repo_url" {
+  description = "Git repo URL used by ACR Task to build the Memtly image."
+  type        = string
+  default     = "https://github.com/Memtly/Memtly.Community.git"
+}
+
+variable "build_repo_branch" {
+  description = "Branch or ref to build from."
+  type        = string
+  default     = "master"
+}
+
+variable "build_dockerfile_path" {
+  description = "Path to Dockerfile inside the repo (relative)."
+  type        = string
+  default     = "Memtly.Community/Dockerfile"
+}
+
+variable "build_image_name" {
+  description = "Image name (and tag) to produce and push into ACR."
+  type        = string
+  default     = "memtly:latest"
+}
+
+variable "dockerhub_username" {
+  description = "Docker Hub username used for authenticated pulls/imports."
+  type        = string
+  default     = ""
+}
+
+variable "dockerhub_password" {
+  description = "Docker Hub password or access token (sensitive)."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 # Memtly + MariaDB settings
 variable "memtly_image" {
   description = "Memtly container image"

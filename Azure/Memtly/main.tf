@@ -94,6 +94,52 @@ resource "azurerm_log_analytics_workspace" "law" {
   retention_in_days   = 30
 }
 
+resource "azurerm_container_registry" "acr" {
+  count               = var.create_container_registry ? 1 : 0
+  name                = length(var.container_registry_name) > 0 ? var.container_registry_name : lower("${var.name_prefix}acr${random_id.unique.hex}")
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = var.container_registry_sku
+  admin_enabled       = true
+}
+
+# Import common public images into the ACR so ACI can pull them without manual pushes.
+resource "null_resource" "acr_build_and_import" {
+  count = var.create_container_registry && var.import_images ? 1 : 0
+
+  triggers = {
+    acr_name           = azurerm_container_registry.acr[0].name
+    import_mariadb_src = var.import_mariadb_source
+    import_memtly_src  = var.import_memtly_source
+    dockerhub_username = var.dockerhub_username
+    dockerhub_password = var.dockerhub_password
+    build_trigger      = timestamp()
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["PowerShell", "-Command"]
+    command     = <<-EOT
+      $ErrorActionPreference = 'Stop';
+      $registryName = "${azurerm_container_registry.acr[0].name}"
+      # Import MariaDB from Docker Hub; use Docker Hub credentials when provided.
+      if ([string]::IsNullOrEmpty("${var.dockerhub_username}")) {
+        az acr import -n $registryName --source docker.io/${var.import_mariadb_source} --image mariadb:latest --force
+      } else {
+        az acr import -n $registryName --source docker.io/${var.import_mariadb_source} --image mariadb:latest --username "${var.dockerhub_username}" --password "${var.dockerhub_password}" --force
+      }
+
+      # Import Memtly from Docker Hub into ACR.
+      if ([string]::IsNullOrEmpty("${var.dockerhub_username}")) {
+        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:latest --force
+      } else {
+        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:latest --username "${var.dockerhub_username}" --password "${var.dockerhub_password}" --force
+      }
+    EOT
+  }
+
+  depends_on = [azurerm_container_registry.acr]
+}
+
 # Azure Container Instance using the provided container image
 resource "azurerm_container_group" "cg" {
   name                = "${var.name_prefix}-cg"
@@ -129,7 +175,7 @@ resource "azurerm_container_group" "cg" {
     content {
       # MariaDB for Memtly (runs inside the same container group)
       name  = "mariadb"
-      image = var.mariadb_image
+      image = local.mariadb_image_local
 
       cpu    = 0.5
       memory = 1
@@ -164,7 +210,7 @@ resource "azurerm_container_group" "cg" {
     content {
       # Memtly service (connects to local mariadb in the same group)
       name   = "memtly"
-      image  = var.memtly_image
+      image  = local.memtly_image_local
       cpu    = 0.5
       memory = 1
 
@@ -188,15 +234,15 @@ resource "azurerm_container_group" "cg" {
           ASPNETCORE_ENVIRONMENT                = "Development"
           ASPNETCORE_DETAILEDERRORS             = "true"
           ASPNETCORE_LOGGING__LOGLEVEL__DEFAULT = "Debug"
-          TITLE                           = "Lackovitch Wedding Photos" # Display title in application
-          SINGLE_GALLERY_MODE         = "jerry+kaleigh" # enable single gallery mode to simplify testing and avoid issues with multiple galleries in a shared ACI environment
-          GALLERY_SECRET_KEY         = "test" # required but not used when GALLERY_PREVENT_DUPLICATES is enabled
-          GALLERY_REQUIRE_REVIEW = "false" # disable review requirement to simplify testing; re-enable for production use
-          GALLERY_PREVENT_DUPLICATES = "true" # prevent duplicate uploads based on hash comparison. This works
-          GALLERY_UPLOAD = "true" # enable uploading of files to test storage connectivity
-          GALLERY_DOWNLOAD = "true" #enable downloading of files
-          GUEST_GALLERY_CREATION = "false" # disable guest gallery creation to avoid issues
-          DATABASE_SYNC_FROM_CONFIG = "true" #use environment variables for initial DB seeding on startup
+          TITLE                                 = "Lackovitch Wedding Photos" # Display title in application
+          SINGLE_GALLERY_MODE                   = "jerry+kaleigh"             # enable single gallery mode to simplify testing and avoid issues with multiple galleries in a shared ACI environment
+          GALLERY_SECRET_KEY                    = "test"                      # required but not used when GALLERY_PREVENT_DUPLICATES is enabled
+          GALLERY_REQUIRE_REVIEW                = "false"                     # disable review requirement to simplify testing; re-enable for production use
+          GALLERY_PREVENT_DUPLICATES            = "true"                      # prevent duplicate uploads based on hash comparison. This works
+          GALLERY_UPLOAD                        = "true"                      # enable uploading of files to test storage connectivity
+          GALLERY_DOWNLOAD                      = "true"                      #enable downloading of files
+          GUEST_GALLERY_CREATION                = "false"                     # disable guest gallery creation to avoid issues
+          DATABASE_SYNC_FROM_CONFIG             = "true"                      #use environment variables for initial DB seeding on startup
         }
       )
 
@@ -254,11 +300,11 @@ resource "azurerm_container_group" "cg" {
   }
   # Optional image registry credentials for private registries (GHCR/ACR)
   dynamic "image_registry_credential" {
-    for_each = length(var.container_registry_server) > 0 ? [1] : []
+    for_each = length(local.container_registry_server) > 0 ? [1] : []
     content {
-      server   = var.container_registry_server
-      username = var.container_registry_username
-      password = var.container_registry_password
+      server   = local.container_registry_server
+      username = local.container_registry_username
+      password = local.container_registry_password
     }
   }
 
@@ -269,13 +315,23 @@ resource "azurerm_container_group" "cg" {
   tags = {
     project = "memtly"
   }
+  timeouts {
+    create = "60m"
+  }
+
+  depends_on = [null_resource.acr_build_and_import]
 }
 
 /* outputs moved to outputs.tf to avoid duplicate definitions */
 
 locals {
-  storage_account_name = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].name : data.azurerm_storage_account.existing_sa[0].name
-  storage_account_key  = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].primary_access_key : data.azurerm_storage_account.existing_sa[0].primary_access_key
-  dns_label      = length(var.dns_label) > 0 ? var.dns_label : "memtly-${random_id.unique.hex}"
-  key_vault_name = length(var.key_vault_name) > 0 ? var.key_vault_name : "memtly-kv-${random_id.unique.hex}"
+  storage_account_name        = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].name : data.azurerm_storage_account.existing_sa[0].name
+  storage_account_key         = var.manage_storage_in_this_stack ? azurerm_storage_account.sa[0].primary_access_key : data.azurerm_storage_account.existing_sa[0].primary_access_key
+  dns_label                   = length(var.dns_label) > 0 ? var.dns_label : "memtly-${random_id.unique.hex}"
+  key_vault_name              = length(var.key_vault_name) > 0 ? var.key_vault_name : "memtly-kv-${random_id.unique.hex}"
+  container_registry_server   = var.create_container_registry ? azurerm_container_registry.acr[0].login_server : var.container_registry_server
+  container_registry_username = var.create_container_registry ? azurerm_container_registry.acr[0].admin_username : var.container_registry_username
+  container_registry_password = var.create_container_registry ? azurerm_container_registry.acr[0].admin_password : var.container_registry_password
+  memtly_image_local          = var.create_container_registry ? "${azurerm_container_registry.acr[0].login_server}/${var.build_image_name}" : var.memtly_image
+  mariadb_image_local         = var.create_container_registry ? "${azurerm_container_registry.acr[0].login_server}/mariadb:latest" : var.mariadb_image
 }

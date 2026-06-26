@@ -43,6 +43,16 @@ output "container_ip_type" {
   value       = azurerm_container_group.cg.ip_address_type
 }
 
+output "acr_login_server" {
+  description = "Azure Container Registry login server created by this stack."
+  value       = var.create_container_registry ? azurerm_container_registry.acr[0].login_server : ""
+}
+
+output "acr_admin_username" {
+  description = "Azure Container Registry admin username."
+  value       = var.create_container_registry ? azurerm_container_registry.acr[0].admin_username : ""
+}
+
 output "key_vault_name" {
   description = "Name of the Key Vault created for secrets"
   value       = azurerm_key_vault.kv.name
