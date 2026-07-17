@@ -235,8 +235,9 @@ resource "azurerm_container_group" "cg" {
           ASPNETCORE_DETAILEDERRORS             = "true"
           ASPNETCORE_LOGGING__LOGLEVEL__DEFAULT = "Debug"
           TITLE                                 = "Lackovitch Wedding Photos" # Display title in application
-          SINGLE_GALLERY_MODE                   = "jerry+kaleigh"             # enable single gallery mode to simplify testing and avoid issues with multiple galleries in a shared ACI environment
+          SINGLE_GALLERY_MODE                   = "true"             # enable single gallery mode to simplify testing and avoid issues with multiple galleries in a shared ACI environment
           GALLERY_SECRET_KEY                    = "test"                      # required but not used when GALLERY_PREVENT_DUPLICATES is enabled
+          GALLERY_SELECTOR_DROPDOWN             = "true"                     # disable gallery selector dropdown to simplify testing and avoid issues with multiple galleries in a shared ACI environment
           GALLERY_REQUIRE_REVIEW                = "false"                     # disable review requirement to simplify testing; re-enable for production use
           GALLERY_PREVENT_DUPLICATES            = "true"                      # prevent duplicate uploads based on hash comparison. This works
           GALLERY_UPLOAD                        = "true"                      # enable uploading of files to test storage connectivity
