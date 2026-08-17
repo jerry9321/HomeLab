@@ -28,19 +28,15 @@ output "file_share_mariadb" {
   value       = var.file_share_mariadb_name
 }
 
-output "container_fqdn" {
-  description = "Container group FQDN (if public)"
-  value       = azurerm_container_group.cg.fqdn
+output "memtly_url" {
+  description = "URL for accessing the Memtly application"
+  value = "https://${azurerm_container_app.memtly.latest_revision_fqdn}"
+
 }
 
-output "container_ip" {
-  description = "Container group public IP"
-  value       = azurerm_container_group.cg.ip_address
-}
-
-output "container_ip_type" {
-  description = "Container group IP address type (Public/Private)"
-  value       = azurerm_container_group.cg.ip_address_type
+output "memtly_fqdn" {
+  description = "Fully qualified domain name for the Memtly Container App. Use this to access the web app"
+  value       = azurerm_container_app.memtly.ingress[0].fqdn
 }
 
 output "acr_login_server" {
