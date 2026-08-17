@@ -263,7 +263,8 @@ variable "dockerhub_password" {
 variable "memtly_image" {
   description = "Memtly container image"
   type        = string
-  default     = "memtly/memtly:latest"
+  #default     = "memtly/memtly:latest"
+  default     = "memtly/memtly:1.0.5.3"
 }
 
 variable "memtly_port" {
@@ -275,7 +276,8 @@ variable "memtly_port" {
 variable "mariadb_image" {
   description = "MariaDB image for Memtly"
   type        = string
-  default     = "mariadb:latest"
+  #default     = "mariadb:latest"
+  default     = "mariadb:10.6.28-ubi9"
 }
 
 variable "mariadb_root_password" {
