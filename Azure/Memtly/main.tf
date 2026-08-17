@@ -118,9 +118,13 @@ resource "azurerm_container_app" "mariadb" {
 
       image  = local.mariadb_image_local
 
-      cpu    = 0.5
-
-      memory = "1Gi"
+      cpu    = 2
+      memory = "4Gi"
+      # ATTACH VOLUME TO MARIADB DATA PATH
+      volume_mounts {
+        name = "mariadb"
+        path = "/var/lib/mysql"
+      }
 
       liveness_probe {
         transport = "TCP"
@@ -157,6 +161,12 @@ resource "azurerm_container_app" "mariadb" {
         value = "%"
       }
     }
+    # LINK VOLUME TO ACA ENVIRONMENT STORAGE
+    volume {
+      name         = "mariadb"
+      storage_name = azurerm_container_app_environment_storage.mariadb.name
+      storage_type = "AzureFile"
+    }
   }
 }
 
@@ -166,13 +176,19 @@ resource "azurerm_container_app" "memtly" {
   container_app_environment_id = azurerm_container_app_environment.aca.id
   revision_mode                = "Single"
 
+  # FORCE Terraform to finish mounting Azure Files to ACA Environment FIRST
+  depends_on = [
+    azurerm_container_app_environment_storage.uploads,
+    azurerm_container_app_environment_storage.mariadb,
+    azurerm_container_app_environment_storage.config,
+    azurerm_container_app_environment_storage.thumbnails,
+    azurerm_container_app_environment_storage.custom_resources,
+    azurerm_container_app.mariadb
+  ]
+
   identity {
     type = "SystemAssigned"
   }
-
-  depends_on = [
-    azurerm_container_app.mariadb
-  ]
 
   registry {
     server               = local.container_registry_server
