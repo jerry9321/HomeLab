@@ -25,7 +25,7 @@ variable "manage_storage_in_this_stack" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "eastus"
+  default     = "eastus2"
 }
 
 variable "name_prefix" {
