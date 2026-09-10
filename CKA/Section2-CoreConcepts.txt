@@ -1,0 +1,235 @@
+Cluster Architecture
+    Master Node/mgmt node - manage, plan, schedule, monitor Nodes
+        etcd cluster - 
+        kube-scheduler - schedules and sends pods to specific worker nodes as needed/resources allow
+        node controller
+        kube api server -
+
+    Worker Nodes - Host Appications as containers
+        kubelet - an agent that runs on each node in a cliuster. Listens for instructions from the kube API server
+        Kube api server periodically requests an update from the kublet agent
+        kube proxy
+
+    
+Docker vs ContainerD
+    Container Runtime Interface  (CRI) - a standardalized gRPC API fdor managing containers
+    crictl is the CLI for CRI compatible container runtimes - installed separetly.
+
+ETCD for beginners
+    dsitrubted reliable key value store
+    etcd server and etcd client
+
+Kube-API server
+    Any kube command is leveraging the kube api
+    IE: kubectl get pods
+
+    or you can use API directly IE: GET, POST, PUT
+
+    Kube API server is responsible for the following
+    1. Authenticate user
+    2. validate request
+    3. retrieve data
+    4. update etcd
+    5. scheduler
+    6. kubelet
+
+kube controller manager
+    node controller checks for status from the nodes every 5 seconds
+
+    replication controller
+        checks to ensure number of pods are always avaiable
+
+Kube scheduler
+    Decides where a pod will be assigned to on a node
+    does not actually place the pod on a node (that's the kubelet)
+    Filter Nodes - filter out pods that require too many resources from a node.
+    rank nodes - uses prirotiyty function to decide between the nodes that are filtered from the filtering step
+
+
+kubelet
+    kubelet on each worker node. 
+    Register pods
+    Assign pods
+kube proxy
+    Every pod can reach another pod in networking
+    pod networking internal vlan that all pods connect to reach each other
+    two pods may need to communicate via IP. However, a pod being assigned the same IP is never guaranteed
+    This is where services come into play. Service is assigned an IP. When the servicew is communicated to, the service forwards this traffic to the backend pod
+    a service isn't a pod and doesn't have any active listening capabilities
+    Kube proxy is a process that runs on each node
+    Job is to listen to new services
+    creates rules on each nodes to fgorward traffic to the services whioch then gets sent to the pods
+    IP tables rules are used. 
+    proxy is a node level component
+
+pods
+    Containers are deployed on a pod
+    pod is the smallest object you can create in kubernetes
+    pods can have multiple containers
+    Scale up -> create more pods
+    containers in a single pod can communicate with each other via localhost:port
+    Typically it is a single container PER pod
+
+pods with yaml
+    YAML contains the following
+    apiVersion
+    kind: pod, etc.
+    metadata
+        name, 
+        labels
+            app: name
+            type: front-end, etc,etc
+    spec:
+        containers:
+            -name: nginx-container
+            image: nginx
+
+    Pod Definiton.yaml
+    
+    apiVersion: v1
+    kind: pod
+    metadata:
+        name: nginx
+        labels:
+            app: nginx
+            tier: front-end
+    spec:
+        containers:
+        -   name: nginx
+            image: nginx
+        
+recap - replicaSets
+    ensures Specified number of pods are running at all times
+    handles load balancing and scaling
+    replication controller spans across multiple nodes
+    replication controller and replica sets = not the same
+    replication controller is older and being replaced by replicaSets
+    
+    YAML example
+
+    apiVersion: v1
+    kind: ReplicationController
+    metadata:
+        name: myApp-RC
+        labels:
+            app: myApp
+            type: front-end
+    spec:
+        template:
+            metadata:
+            name: nginx
+            labels:
+                app: nginx
+                tier: front-end
+            spec:
+                containers:
+                -   name: nginx
+                    image: nginx
+        replicas: 3
+        selector:
+            matchLabels:
+                type: front-end
+    
+
+    replicSets monitors status of pods and will re-create if something breaks
+
+    labels and selectors are used with replicaSets to do matching as a way to make it monitor a specific set of pods
+    kubectl create -f replicaset-definition.yaml
+    get replicaset
+    delete replicaset myapp-replicaset
+    replace -f replicaset-definition.yaml
+    scale -replicas=6 -f replicaset-definition.yaml
+
+
+Deployments
+    Deployments provide us with the capabilities to upgrade the underlying instances
+    with rolling updates, undo changes, pause and resume changes as require
+    also gives you update strategies such as 
+    RollingUpdateStrategy:  25% max unavailable, 25% max surge
+    
+    Deployments made with a definition file. 
+    Very similar to a replicaSet definition file but with kind set to "Deployment" vs "ReplicaSet"
+
+    Deployments automatically create replicaSets
+    kubectl create -f deployment-definition.yaml
+    kubectl get Deployments
+    kubectl get replicaset
+
+services
+    Services enable connectivity between groups of pods
+    Establishes front end to backend and external data sources
+
+    Services listen to a port on a node and forward requests on that port to a port
+
+    Known as a node port service
+
+    Service Types:
+    1. NodePort - internal pod accessible on a port on the node
+    2. ClusterIP - creates a virtual IP inside the cluster to enable communication between services IE: front end to backend
+    3. LoadBalancer - Distribute load across web servers
+
+    NordPort - Service:Port -> Pod:TargetPort
+    & NodePort - range is ports from 30,000 -> 32,767 
+    IE: NodePort is how you would access it from a computer web browser
+    IE: 192.168.100.11:32650 = -> Then it hits the service:port, then the service
+    forwards traffic to the pod:TargetPort
+
+
+    Definition File used to deploy a service.
+    Kind is a "Service"
+    Within the deployment file use selector to map the service to a specific set of pods
+    
+
+    In situations where multiplepods have the same labels this will load balance traffic across mltiple pods
+    Will also scale across automatically to multiple nodes
+    IE: IP of the node:port will allow access to the pod
+
+    ClusterIP Notes:
+    Creates a single IP that can link multiple pods to a single IP
+    IE: How you can link backend to a front end/database
+
+    Use a definition file to deploy
+    Kind is "Service"
+    Type is "ClusterIP
+    Use selector to link this service to pods
+    kubectl create -f example.yaml
+
+    LoadBalancer notes:
+    Leverage a LB to provide a central point into your workload/application for users
+
+    Use a definition file 
+    kind is Service
+    Type LoadBalancer
+
+    This will work only on supported platforms such as AWS, Azure
+
+
+    NameSpaces:
+    Default auto creates namespaces (3)
+        Default namespace
+        kube-public
+        kube-system
+
+        can use namespaces for dev/prod resources
+
+        Each namespace can have their own rules & policies
+        Can also have their own quota for resources
+        Resources in the same namespace can reach each other by using their names
+        resources can also reach other resources in other namespaces
+        in these situations you simply append the namespace
+        ie:
+        serviceName.NAMESPACE
+        cluster.local is the local dns 
+
+        kubectl get pods - does default namespace
+        kubectl get pods --namespace=kube-system
+
+        You create a namespace through a definition file
+        "kind" namespace
+
+        kubectl config set-context --namespace=dev
+
+        resource quotas
+
+        Use a definition file
+        kind "ResourceQuota"

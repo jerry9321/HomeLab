@@ -70,9 +70,9 @@ resource "null_resource" "acr_build_and_import" {
       }
 
       if ([string]::IsNullOrEmpty("${var.dockerhub_username}")) {
-        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:latest --force
+        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:1.0.7 --force #Use latest if latest image is desired
       } else {
-        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:latest --username "${var.dockerhub_username}" --password "${var.dockerhub_password}" --force
+        az acr import -n $registryName --source docker.io/${var.import_memtly_source} --image memtly:1.0.7 --username "${var.dockerhub_username}" --password "${var.dockerhub_password}" --force
       }
     EOT
   }
@@ -430,6 +430,14 @@ resource "azurerm_container_app" "memtly" {
       env {
         name  = "MYSQL_PASSWORD"
         value = var.mariadb_password
+      }
+      env {
+        name  = "GALLERY_MAX_SIZE_MB"
+        value = 500000
+      }
+      env {
+        name  = "GALLERY_MAX_FILE_SIZE_MB"
+        value = 1000
       }
     }
 
